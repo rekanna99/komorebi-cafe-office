@@ -16,6 +16,7 @@
     },
     "files": [
       "main.js",
+      "preload.js",
       "app/**/*",
       "cafe-background.png",
       "top-bar.png",

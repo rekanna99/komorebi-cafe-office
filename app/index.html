@@ -478,6 +478,32 @@ let currentStaff = 'espresso';
 const chatHistories = {};
 Object.keys(staffData).forEach(k => { chatHistories[k] = []; });
 
+async function saveAllChats() {
+  const msgs = document.getElementById('chatMessages');
+  if (msgs.innerHTML.trim()) {
+    chatHistories[currentStaff] = [msgs.innerHTML];
+  }
+  if (window.cafe) {
+    const result = await window.cafe.saveChats(chatHistories);
+    if (result.ok) console.log('대화 저장 완료');
+  }
+}
+
+async function loadAllChats() {
+  if (!window.cafe) return;
+  const result = await window.cafe.loadChats();
+  if (result.ok && result.data) {
+    for (const [id, msgs] of Object.entries(result.data)) {
+      if (chatHistories[id] !== undefined) chatHistories[id] = msgs;
+    }
+    console.log('이전 대화 불러오기 완료');
+  }
+}
+
+loadAllChats();
+window.addEventListener('beforeunload', () => saveAllChats());
+setInterval(saveAllChats, 30000);
+
 function openChat(staffId) {
   const staff = staffData[staffId];
   if (!staff) return;
@@ -529,6 +555,7 @@ function sendMessage() {
     const staff = staffData[currentStaff];
     const modelClass = staff.model === 'GPT' ? 'model-gpt' : 'model-claude';
     addMsg(`Working on it... This would connect to the ${staff.model} API in production.`, false, modelClass, staff.model);
+    saveAllChats();
   }, 800);
 }
 
