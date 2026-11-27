@@ -1,0 +1,38 @@
+{
+  "name": "komorebi-cafe-office",
+  "version": "1.0.0",
+  "description": "코모레비 다방 - AI Office",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.komorebi.cafe-office",
+    "productName": "코모레비 다방",
+    "win": {
+      "target": "portable",
+      "icon": "icon.ico"
+    },
+    "files": [
+      "main.js",
+      "app/**/*",
+      "cafe-background.png",
+      "top-bar.png",
+      "profiles/**/*",
+      "original-cutouts/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "devDependencies": {
+    "@electron/asar": "^4.3.4",
+    "electron": "^33.4.11",
+    "electron-builder": "^25.0.0",
+    "electron-packager": "^17.1.2"
+  },
+  "allowScripts": {
+    "electron@33.4.11": true
+  }
+}
