@@ -486,17 +486,34 @@ async function saveAllChats() {
   if (window.cafe) {
     const result = await window.cafe.saveChats(chatHistories);
     if (result.ok) console.log('대화 저장 완료');
+  } else {
+    try {
+      localStorage.setItem('komorebi-chats', JSON.stringify(chatHistories));
+      console.log('대화 저장 완료 (브라우저)');
+    } catch (e) { console.warn('저장 실패:', e); }
   }
 }
 
 async function loadAllChats() {
-  if (!window.cafe) return;
-  const result = await window.cafe.loadChats();
-  if (result.ok && result.data) {
-    for (const [id, msgs] of Object.entries(result.data)) {
-      if (chatHistories[id] !== undefined) chatHistories[id] = msgs;
+  if (window.cafe) {
+    const result = await window.cafe.loadChats();
+    if (result.ok && result.data) {
+      for (const [id, msgs] of Object.entries(result.data)) {
+        if (chatHistories[id] !== undefined) chatHistories[id] = msgs;
+      }
+      console.log('이전 대화 불러오기 완료');
     }
-    console.log('이전 대화 불러오기 완료');
+  } else {
+    try {
+      const saved = localStorage.getItem('komorebi-chats');
+      if (saved) {
+        const data = JSON.parse(saved);
+        for (const [id, msgs] of Object.entries(data)) {
+          if (chatHistories[id] !== undefined) chatHistories[id] = msgs;
+        }
+        console.log('이전 대화 불러오기 완료 (브라우저)');
+      }
+    } catch (e) { console.warn('불러오기 실패:', e); }
   }
 }
 
